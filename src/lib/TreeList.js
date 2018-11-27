@@ -8,6 +8,10 @@ import Body from './Body';
 import { getRowsWithChildren } from './util/TreeUtils';
 import getSortedData from './util/SortUtils';
 
+import { memoize } from 'lodash';
+
+const memoizedHash = memoize(hash);
+
 class TreeList extends Component {
   constructor(props) {
     super(props);
@@ -121,10 +125,7 @@ class TreeList extends Component {
     const metadata = getRowsWithChildren(renderData, id, parentId);
 
     // construct update keys
-    const updateHash = hash({
-      data: renderData,
-      sort: JSON.stringify(this.state.sortedColumns)
-    });
+    const updateHash = memoizedHash(renderData) + memoizedHash(this.state.sortedColumns);
 
     return (
       <div className='tgrid'>

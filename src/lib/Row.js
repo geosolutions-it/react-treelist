@@ -11,7 +11,8 @@ class Row extends Component {
     this.handleSelectRow = this.handleSelectRow.bind(this);
   }
 
-  handleExpandToggle() {
+  handleExpandToggle(e) {
+    e.stopPropagation();
     this.props.onExpandToggle(this.props.data);
   }
 
