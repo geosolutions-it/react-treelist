@@ -8,7 +8,7 @@ import Body from './Body';
 import { getRowsWithChildren } from './util/TreeUtils';
 import getSortedData from './util/SortUtils';
 
-import { memoize } from 'lodash';
+import memoize from 'lodash/memoize';
 
 const memoizedHash = memoize(hash);
 
@@ -153,6 +153,7 @@ class TreeList extends Component {
           expandAll={options.expandAll}
           canSelect={options.canSelect}
           onSelectRow={handlers.onSelectRow}
+          rowClass={options.rowClass}
           >
         </Body>
       </div>

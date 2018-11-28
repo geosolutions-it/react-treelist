@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import isFunction from 'lodash/isFunction';
+
 import RowCell from './RowCell';
 
 class Row extends Component {
@@ -18,6 +20,16 @@ class Row extends Component {
 
   handleSelectRow() {
     this.props.onSelect(this.props.data);
+  }
+
+  getClassName() {
+    if (this.props.className) {
+      if (isFunction(this.props.className)) {
+          return this.props.className(this.props.data);
+      }
+      return this.props.className;
+    }
+    return '';
   }
 
   makeCells(columns, data, canExpand) {
@@ -56,9 +68,10 @@ class Row extends Component {
   render() {
     const { columns, data, canExpand, selected } = this.props;
     const cells = this.makeCells(columns, data, canExpand);
-
+    const selectedClassName = selected ? "row-selected" : "";
+    const className = [selectedClassName, this.getClassName()].join(' ');
     return (
-      <tr className={selected ? "row-selected" : ""} onClick={this.handleSelectRow}>{cells}</tr>
+      <tr className={className} onClick={this.handleSelectRow}>{cells}</tr>
     );
   }
 }
@@ -72,10 +85,11 @@ Row.propTypes = {
   expanded: PropTypes.bool,
   selected: PropTypes.bool,
   onExpandToggle: PropTypes.func,
-  onSelect: PropTypes.func
+  onSelect: PropTypes.func,
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
-const createRow = function(data, level, columns, idField, canExpand, expanded, onExpandToggleHandler, onSelectToggleHandler, selected) {
+const createRow = function(data, level, columns, idField, canExpand, expanded, onExpandToggleHandler, onSelectToggleHandler, selected, rowClass) {
   return (<Row
             key={'row-' + data[idField]}
             reactKey={'row-' + data[idField]}
@@ -87,6 +101,7 @@ const createRow = function(data, level, columns, idField, canExpand, expanded, o
             onExpandToggle={onExpandToggleHandler}
             onSelect={onSelectToggleHandler}
             selected={selected}
+            className={rowClass}
             ></Row>);
 }
 
