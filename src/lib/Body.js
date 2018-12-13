@@ -91,11 +91,13 @@ class Body extends Component {
 
   handleSelectRow(row) {
     if (row[this.props.idField] === this.state.selectedRow) {
-      // deselect
-      this.setState({
-        selectedRow: null
-      });
-      this.props.onSelectRow(null);
+      if (this.props.canDeselect) {
+        // deselect
+        this.setState({
+          selectedRow: null
+        });
+        this.props.onSelectRow(null);
+      }
     } else {
       this.setState({
         selectedRow: row[this.props.idField]
@@ -212,6 +214,7 @@ Body.propTypes = {
   itemHeight: PropTypes.number,
   onSelectRow: PropTypes.func,
   canSelect: PropTypes.bool,
+  canDeselect: PropTypes.bool,
   rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
@@ -221,7 +224,8 @@ Body.defaultProps = {
   expandAll: false,
   itemHeight: 35,
   onSelectRow: () => {},
-  canSelect: false
+  canSelect: false,
+  canDeselect: false
 };
 
 export default Body;

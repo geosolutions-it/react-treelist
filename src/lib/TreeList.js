@@ -152,6 +152,7 @@ class TreeList extends Component {
           updateHash={updateHash}
           expandAll={options.expandAll}
           canSelect={options.canSelect}
+          canDeselect={options.canDeselect}
           onSelectRow={handlers.onSelectRow}
           rowClass={options.rowClass}
           >
