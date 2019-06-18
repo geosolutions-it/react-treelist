@@ -158,6 +158,7 @@ class Body extends Component {
     const shouldUpdate = nextState.scrollTop !== this.state.scrollTop ||
       nextState.scrollLeft !== this.state.scrollLeft ||
       nextProps.width !== this.props.width ||
+      nextProps.height !== this.props.height ||
       nextState.expandedRows.length !== this.state.expandedRows.length ||
       nextProps.updateHash !== this.props.updateHash ||
       nextState.selectedRow !== this.state.selectedRow;
