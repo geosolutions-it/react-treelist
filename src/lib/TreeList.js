@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import hash from 'object-hash';
+import isNil from 'lodash/isNil';
 
 import '../css/treegrid.css';
 import Header from './Header';
@@ -94,10 +95,22 @@ class TreeList extends Component {
     }
   }
 
+  getUpdateHash(renderData) {
+    if (!isNil(this.props.refresh)) {
+      return memoizedHash(this.state.sortedColumns);
+    } else {
+      return memoizedHash({
+        data: renderData,
+        sort: JSON.stringify(this.state.sortedColumns)
+      });
+    }
+  }
+
   render() {
     let { id, parentId } = this.props;
     const { data, options } = this.props;
     const { handlers } = this.props;
+    const { refresh } = this.props;
     const { columns } = this.state;
 
     // assign defaults
@@ -125,7 +138,7 @@ class TreeList extends Component {
     const metadata = getRowsWithChildren(renderData, id, parentId);
 
     // construct update keys
-    const updateHash = memoizedHash(renderData) + memoizedHash(this.state.sortedColumns);
+    const updateHash = this.getUpdateHash(renderData);
 
     return (
       <div className='tgrid'>
@@ -150,6 +163,7 @@ class TreeList extends Component {
           parentIdField={parentId}
           onHScroll={this.onBodyHScroll}
           updateHash={updateHash}
+          refresh={refresh}
           expandAll={options.expandAll}
           canSelect={options.canSelect}
           canDeselect={options.canDeselect}
@@ -168,7 +182,8 @@ TreeList.propTypes = {
   options: PropTypes.object,
   id: PropTypes.string,
   parentId: PropTypes.string,
-  handlers: PropTypes.object
+  handlers: PropTypes.object,
+  refresh: PropTypes.any
 };
 
 TreeList.defaultProps = {
