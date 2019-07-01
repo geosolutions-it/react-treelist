@@ -29,6 +29,16 @@ class Body extends Component {
     this._expandAllComplete = false;
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.updateHash !== this.props.updateHash ||
+      (!isNil(nextProps.refresh) && nextProps.refresh !== this.props.refresh)) {
+        this.setState({
+          expandedRows: [],
+          selectedRow: null
+        });
+      }
+  }
+
   makeRows(data, metadata, columns, idField, parentIdField, expandAll, rowClass) {
     // start with first level records
     const rootParents = getRootParents(data, parentIdField);
