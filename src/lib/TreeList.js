@@ -111,6 +111,7 @@ class TreeList extends Component {
     const { data, options } = this.props;
     const { handlers } = this.props;
     const { refresh } = this.props;
+    const { reset } = this.props;
     const { columns } = this.state;
 
     // assign defaults
@@ -164,6 +165,7 @@ class TreeList extends Component {
           onHScroll={this.onBodyHScroll}
           updateHash={updateHash}
           refresh={refresh}
+          reset={reset}
           expandAll={options.expandAll}
           canSelect={options.canSelect}
           canDeselect={options.canDeselect}
@@ -183,7 +185,8 @@ TreeList.propTypes = {
   id: PropTypes.string,
   parentId: PropTypes.string,
   handlers: PropTypes.object,
-  refresh: PropTypes.any
+  refresh: PropTypes.any,
+  reset: PropTypes.any
 };
 
 TreeList.defaultProps = {

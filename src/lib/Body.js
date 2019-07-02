@@ -31,7 +31,7 @@ class Body extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.updateHash !== this.props.updateHash ||
-      (!isNil(nextProps.refresh) && nextProps.refresh !== this.props.refresh)) {
+      (!isNil(nextProps.reset) && nextProps.reset !== this.props.reset)) {
         this.setState({
           expandedRows: [],
           selectedRow: null
@@ -229,7 +229,8 @@ Body.propTypes = {
   canSelect: PropTypes.bool,
   canDeselect: PropTypes.bool,
   rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  refresh: PropTypes.any
+  refresh: PropTypes.any,
+  reset: PropTypes.any
 };
 
 Body.defaultProps = {

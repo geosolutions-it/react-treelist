@@ -1,6 +1,6 @@
 {
   "name": "react-treelist",
-  "version": "1.3.3-dg",
+  "version": "1.3.4-dg",
   "description": "A React treelist component to display data in tree structure.",
   "main": "build/index.js",
   "scripts": {
