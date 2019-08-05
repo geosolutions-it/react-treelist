@@ -111,6 +111,7 @@ class TreeList extends Component {
     const { data, options } = this.props;
     const { handlers } = this.props;
     const { refresh } = this.props;
+    const { selected } = this.props;
     const { reset } = this.props;
     const { columns } = this.state;
 
@@ -171,6 +172,7 @@ class TreeList extends Component {
           canDeselect={options.canDeselect}
           onSelectRow={handlers.onSelectRow}
           rowClass={options.rowClass}
+          selected={selected}
           >
         </Body>
       </div>
@@ -186,7 +188,8 @@ TreeList.propTypes = {
   parentId: PropTypes.string,
   handlers: PropTypes.object,
   refresh: PropTypes.any,
-  reset: PropTypes.any
+  reset: PropTypes.any,
+  selected: PropTypes.any
 };
 
 TreeList.defaultProps = {

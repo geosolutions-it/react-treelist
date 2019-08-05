@@ -34,12 +34,45 @@ class Body extends Component {
       (!isNil(nextProps.reset) && nextProps.reset !== this.props.reset)) {
         this.setState({
           expandedRows: [],
-          selectedRow: null
+          selectedRow: nextProps.selected || null
         });
+      } else if(nextProps.selected && nextProps.selected !== this.props.selected) {
+        const scrollTop = this.getScrollToMakeVisible(nextProps.selected);
+        if (scrollTop != null) {
+          this.scroller.scrollTop = scrollTop;
+          this.setState({
+            selectedRow: nextProps.selected,
+            scrollTop: scrollTop
+          });
+        } else {
+          this.setState({
+            selectedRow: nextProps.selected
+          });
+        }
       }
   }
 
-  makeRows(data, metadata, columns, idField, parentIdField, expandAll, rowClass) {
+  getScrollToMakeVisible(selected) {
+    const { columns, data, metadata, idField,
+      parentIdField, expandAll, rowClass } = this.props;
+
+    const rows = this.makeRows(data, metadata, columns,
+      idField, parentIdField, expandAll, rowClass, (data) => data[idField]);
+
+    const startIndex = rows.indexOf(selected);
+
+    const { itemHeight, height } = this.props;
+
+    const scroll = startIndex * itemHeight;
+    const currentScroll = (this.state.scrollTop || 0);
+    if (scroll >= currentScroll && scroll <= currentScroll + height) {
+      // already in view
+      return null;
+    }
+    return scroll;
+  }
+
+  makeRows(data, metadata, columns, idField, parentIdField, expandAll, rowClass, rowCreator = createRow) {
     // start with first level records
     const rootParents = getRootParents(data, parentIdField);
 
@@ -53,16 +86,16 @@ class Body extends Component {
     const rows = [];
     rootParents.forEach((d) => {
       // parent rows start at level 0
-      rows.push(...this.makeRowsRecursive(d, 0, metadata.map, columns, idField, parentIdField, rowClass));
+      rows.push(...this.makeRowsRecursive(d, 0, metadata.map, columns, idField, parentIdField, rowClass, rowCreator));
     });
     return rows;
   }
 
-  makeRowsRecursive(row, level, metadata, columns, idField, parentIdField, rowClass) {
+  makeRowsRecursive(row, level, metadata, columns, idField, parentIdField, rowClass, rowCreator = createRow) {
     const rows = [];
     const canExpand = row[idField] in metadata;
     // push the parent row first
-    rows.push(createRow(row, level, columns, idField,
+    rows.push(rowCreator(row, level, columns, idField,
       canExpand, this.state.expandedRows.indexOf(row[idField]) > -1,
       this.handleExpandToggle, this.props.canSelect ? this.handleSelectRow : () => { }, row[idField] === this.state.selectedRow, rowClass));
     // children in next level for indentation
@@ -70,7 +103,7 @@ class Body extends Component {
     if (canExpand && _isExpanded(row[idField], this.state.expandedRows)) {
       let children = getChildren(row, this.props.data, idField, parentIdField);
       children.forEach((d) => {
-        rows.push(...this.makeRowsRecursive(d, nextLevel, metadata, columns, idField, parentIdField, rowClass));
+        rows.push(...this.makeRowsRecursive(d, nextLevel, metadata, columns, idField, parentIdField, rowClass, rowCreator));
       });
     }
     return rows;
@@ -203,7 +236,7 @@ class Body extends Component {
 
     return (
       <div className='tgrid-body-wrapper'
-        onScroll={this.onScroll} style={{ height: height }}>
+        onScroll={this.onScroll} style={{ height: height }} ref={(el) => this.scroller = el}>
         <table className='tgrid-body-table' style={{ width: width}}>
           <Colgroup columns={columns}></Colgroup>
           {tableBody}
@@ -230,7 +263,8 @@ Body.propTypes = {
   canDeselect: PropTypes.bool,
   rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   refresh: PropTypes.any,
-  reset: PropTypes.any
+  reset: PropTypes.any,
+  selected: PropTypes.any
 };
 
 Body.defaultProps = {
@@ -240,7 +274,8 @@ Body.defaultProps = {
   itemHeight: 35,
   onSelectRow: () => {},
   canSelect: false,
-  canDeselect: false
+  canDeselect: false,
+  selected: null
 };
 
 export default Body;
