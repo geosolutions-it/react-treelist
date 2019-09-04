@@ -50,6 +50,9 @@ class Body extends Component {
           });
         }
       }
+      if(!isNil(nextProps.refresh) && nextProps.refresh !== this.props.refresh ) {
+        this._expandAllComplete = false;
+      }
   }
 
   getScrollToMakeVisible(selected) {
